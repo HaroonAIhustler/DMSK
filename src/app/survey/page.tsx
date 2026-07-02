@@ -206,9 +206,9 @@ function buildWebhookContact(answers: SurveyAnswers) {
     state: answers.state,
     current_career_situation: answers.current_career_situation,
     educational_qualification: answers.educational_qualification,
-    when_did_you_graduates: mainFieldOfStudy || answers.graduation_year,
+    when_did_you_graduates: answers.graduation_year,
     graduation_year: answers.graduation_year,
-    field_of_study: mainFieldOfStudy,
+    field_of_study: mainFieldOfStudy || answers.field_of_study,
     field_of_study_main: mainFieldOfStudy,
     field_of_study__detail: answers.field_of_study,
     flexibility_looking_for: answers.career_flexibility_motivation,
@@ -230,25 +230,49 @@ function buildWebhookContact(answers: SurveyAnswers) {
   };
 }
 
-function sendSurveyWebhook(eventName: string, answers: SurveyAnswers, session?: FunnelSession | null) {
+async function sendSurveyWebhook(eventName: string, answers: SurveyAnswers, session?: FunnelSession | null) {
   const contact = buildWebhookContact(answers);
+  const payload = {
+    event_name: eventName,
+    event_timestamp: new Date().toISOString(),
+    session_id: session?.session_id,
+    lead_id: session?.lead_id,
+    browser_id: session?.browser_id,
+    contact,
+    ...contact,
+    answers: {
+      ...answers,
+      preferred_job_location: answers.city,
+      current_career_situation: answers.current_career_situation,
+      educational_qualification: answers.educational_qualification,
+      when_did_you_graduates: answers.graduation_year,
+      field_of_study: contact.field_of_study,
+      field_of_study__detail: answers.field_of_study,
+      flexibility_looking_for: answers.career_flexibility_motivation,
+      field_working_in: answers.current_work_field,
+      professional_certification: answers.certification,
+      social_platforms: answers.social_activity,
+      when_you_see_ads: answers.ads_posts_observation,
+      are_you_curious: answers.online_ads_curiosity,
+      do_you_wondered: answers.retargeting_curiosity,
+      are_you_comfortable_learning: answers.tool_comfort,
+      ai_proficiency_level: answers.ai_proficiency,
+      medium: answers.utm_medium
+    },
+    utm: session?.utm,
+    result: session?.result
+  };
 
-  void fetch("/api/question-webhook", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      event_name: eventName,
-      event_timestamp: new Date().toISOString(),
-      session_id: session?.session_id,
-      lead_id: session?.lead_id,
-      browser_id: session?.browser_id,
-      contact,
-      ...contact,
-      answers,
-      utm: session?.utm,
-      result: session?.result
-    })
-  }).catch(() => undefined);
+  try {
+    await fetch("/api/question-webhook", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+      keepalive: true
+    });
+  } catch {
+    // Webhook delivery should not block the user journey.
+  }
 }
 
 export default function SurveyPage() {
@@ -402,7 +426,7 @@ export default function SurveyPage() {
     await sendFunnelEvent("survey_completed", "survey", "/survey", finalSession);
     await sendFunnelEvent("fit_score_calculated", "survey", "/survey", finalSession);
     await sendFunnelEvent("survey_to_results_redirect", "survey", "/survey", finalSession);
-    sendSurveyWebhook("survey_completed", normalizedAnswers, finalSession);
+    await sendSurveyWebhook("survey_completed", normalizedAnswers, finalSession);
     await playResultsLoader();
     const resultsPath = result.fit_score < 40 ? "/results/low-fit" : "/results";
     router.push(`${resultsPath}?session_id=${finalSession.session_id}`);
