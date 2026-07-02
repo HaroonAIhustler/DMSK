@@ -60,6 +60,14 @@ export default function DmskCareerVideoPage() {
         background: "#ffffff",
       }}
     >
+      <style>{`
+        @keyframes playBounce {
+          0%, 100% { transform: translate(-50%, -50%) scale(1); }
+          30% { transform: translate(-50%, calc(-50% - 10px)) scale(1.04); }
+          55% { transform: translate(-50%, calc(-50% + 4px)) scale(0.98); }
+          75% { transform: translate(-50%, calc(-50% - 3px)) scale(1.02); }
+        }
+      `}</style>
       <video
         ref={videoRef}
         src="/assets/dmsk-career-bonus-video.mp4"
@@ -104,6 +112,7 @@ export default function DmskCareerVideoPage() {
             boxShadow: "0 16px 34px rgba(15, 23, 42, 0.24)",
             cursor: "pointer",
             transform: "translate(-50%, -50%)",
+            animation: "playBounce 1.7s ease-in-out infinite",
           }}
         >
           <span

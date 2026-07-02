@@ -7,6 +7,8 @@ function shouldForwardEvent(eventName: string) {
 
 function compactSession(payload: FunnelEventPayload) {
   const { session } = payload;
+  const name = [session.answers.first_name, session.answers.last_name].filter(Boolean).join(" ");
+
   return {
     event_name: payload.event_name,
     funnel_stage: payload.funnel_stage,
@@ -15,9 +17,12 @@ function compactSession(payload: FunnelEventPayload) {
     session_id: session.session_id,
     lead_id: session.lead_id,
     browser_id: session.browser_id,
+    ...session.answers,
     first_name: session.answers.first_name,
+    firstName: session.answers.first_name,
     last_name: session.answers.last_name,
-    name: [session.answers.first_name, session.answers.last_name].filter(Boolean).join(" "),
+    lastName: session.answers.last_name,
+    name,
     email: session.answers.email,
     phone: session.answers.phone,
     city: session.answers.city,
@@ -30,7 +35,7 @@ function compactSession(payload: FunnelEventPayload) {
     identity: {
       first_name: session.answers.first_name,
       last_name: session.answers.last_name,
-      name: [session.answers.first_name, session.answers.last_name].filter(Boolean).join(" "),
+      name,
       email: session.answers.email,
       phone: session.answers.phone,
       city: session.answers.city,

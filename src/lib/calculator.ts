@@ -100,7 +100,7 @@ export function searchCities(query: string, limit = 40) {
 export const fieldOfStudyOptions = Array.from(new Set(fieldFitScores.map((row) => String(row["Field of Study"]))));
 
 export const questionOptions = {
-  current_career_situation: optionsFor("Current Career Situation"),
+  current_career_situation: careerSituationOptions(),
   educational_qualification: optionsFor("Educational Qualification"),
   graduation_year: optionsFor("Graduation Year"),
   career_flexibility_motivation: optionsFor("Career Flexibility Motivation"),
@@ -113,6 +113,17 @@ export const questionOptions = {
   tool_comfort: optionsFor("Tool Comfort"),
   ai_proficiency: optionsFor("AI Proficiency")
 };
+
+function careerSituationOptions() {
+  const options = optionsFor("Current Career Situation");
+  const preferredFirst = "I am actively looking for a job";
+
+  return options.sort((left, right) => {
+    if (left === preferredFirst) return -1;
+    if (right === preferredFirst) return 1;
+    return 0;
+  });
+}
 
 function optionsFor(questionKey: string) {
   return answerRules

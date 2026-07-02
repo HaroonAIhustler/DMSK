@@ -219,6 +219,13 @@ export default function ResultsPage() {
         </header>
 
         <section className="fit-kit-section fit-video-offer-section">
+          <div className="fit-video-mobile-heading">
+            <h2>
+              <span className="fit-kit-ai-label"><Sparkles size={22} /> AI Powered</span>
+              <span>Digital Marketers have <strong>10,000+</strong> Job opening for Freshers in India</span>
+            </h2>
+          </div>
+
           <div className="fit-video-preview" aria-label="AI digital marketing career video preview">
             <iframe
               className="fit-video-preview-media"
