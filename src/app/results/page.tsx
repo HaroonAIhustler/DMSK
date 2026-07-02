@@ -1,6 +1,6 @@
 "use client";
 
-import type { CSSProperties, ReactNode } from "react";
+import type { CSSProperties, MouseEvent, ReactNode } from "react";
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
@@ -134,6 +134,20 @@ export default function ResultsPage() {
     });
   }
 
+  function scrollToStarterKit(event: MouseEvent<HTMLAnchorElement>, location: string) {
+    event.preventDefault();
+    void ctaClicked(location);
+
+    const target = document.getElementById("starter-kit-offer");
+    if (!target) return;
+
+    window.history.replaceState(null, "", "#starter-kit-offer");
+    window.scrollTo({
+      top: target.getBoundingClientRect().top + window.scrollY,
+      behavior: "smooth"
+    });
+  }
+
   return (
     <main className="fit-result-page">
       <nav className="fit-result-nav">
@@ -170,7 +184,7 @@ export default function ResultsPage() {
         </section>
 
         <div className="fit-result-main-cta">
-          <Link className="fit-result-button fit-result-button--wide fit-result-button--yellow" href="#starter-kit-offer" onClick={() => ctaClicked("results_hero")}>
+          <Link className="fit-result-button fit-result-button--wide fit-result-button--yellow" href="#starter-kit-offer" onClick={(event) => scrollToStarterKit(event, "results_hero")}>
             Want to Get started? Click Here →
           </Link>
           <span><LockKeyhole size={14} /> Low-risk first step. Instant access.</span>
@@ -266,7 +280,7 @@ export default function ResultsPage() {
         </section>
 
         <div className="fit-comparison-cta">
-          <Link className="fit-result-button fit-result-button--wide fit-result-button--green" href="#starter-kit-offer" onClick={() => ctaClicked("results_comparison_to_offer")}>
+          <Link className="fit-result-button fit-result-button--wide fit-result-button--green" href="#starter-kit-offer" onClick={(event) => scrollToStarterKit(event, "results_comparison_to_offer")}>
             Get Your Bonus Now! <ArrowRight size={16} />
           </Link>
         </div>
