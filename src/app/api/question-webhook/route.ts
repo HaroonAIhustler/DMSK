@@ -66,7 +66,7 @@ function normalizeWebhookPayload(payload: Record<string, unknown>) {
 
 export async function POST(request: Request) {
   const payload = await request.json().catch(() => null);
-  const webhookUrl = process.env.QUESTION_WEBHOOK_URL || process.env.GHL_WEBHOOK_URL;
+  const webhookUrl = process.env.WEBHOOK_URL || process.env.QUESTION_WEBHOOK_URL || process.env.GHL_WEBHOOK_URL;
 
   if (!payload || typeof payload !== "object") {
     return NextResponse.json({ ok: false, error: "Invalid webhook payload" }, { status: 400 });

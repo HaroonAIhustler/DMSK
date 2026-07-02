@@ -2,7 +2,13 @@ import { NextResponse } from "next/server";
 import type { FunnelEventPayload } from "@/lib/types";
 
 function shouldForwardEvent(eventName: string) {
-  return eventName.endsWith("_page_view");
+  return (
+    eventName.endsWith("_page_view") ||
+    eventName === "survey_completed" ||
+    eventName === "lead_details_submitted" ||
+    eventName === "fit_score_calculated" ||
+    eventName === "results_cta_clicked"
+  );
 }
 
 function compactSession(payload: FunnelEventPayload) {
@@ -59,7 +65,7 @@ function compactSession(payload: FunnelEventPayload) {
 export async function POST(request: Request) {
   const payload = (await request.json()) as FunnelEventPayload;
   const webhookPayload = compactSession(payload);
-  const webhookUrl = process.env.GHL_WEBHOOK_URL || process.env.QUESTION_WEBHOOK_URL;
+  const webhookUrl = process.env.WEBHOOK_URL || process.env.GHL_WEBHOOK_URL || process.env.QUESTION_WEBHOOK_URL;
 
   if (!shouldForwardEvent(payload.event_name)) {
     return NextResponse.json({ ok: true, forwarded: false, skipped: true });
