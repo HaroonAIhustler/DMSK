@@ -39,7 +39,7 @@ function compactSession(payload: FunnelEventPayload) {
 export async function POST(request: Request) {
   const payload = (await request.json()) as FunnelEventPayload;
   const webhookPayload = compactSession(payload);
-  const webhookUrl = process.env.GHL_WEBHOOK_URL;
+  const webhookUrl = process.env.GHL_WEBHOOK_URL || process.env.QUESTION_WEBHOOK_URL;
 
   if (webhookUrl) {
     try {

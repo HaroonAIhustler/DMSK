@@ -7,6 +7,8 @@
 - `QUESTION_WEBHOOK_URL`: LeadConnector or GoHighLevel webhook URL for per-question survey updates
 - `NEXT_PUBLIC_RAZORPAY_KEY_ID`: Razorpay publishable key, only needed if `/starter-kit` checkout is live
 
+Set `GHL_WEBHOOK_URL` and `QUESTION_WEBHOOK_URL` in production before going live. Do not commit live webhook URLs to the public repository.
+
 ## Preflight
 
 Run these before deploying:
