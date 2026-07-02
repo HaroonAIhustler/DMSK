@@ -1,6 +1,10 @@
 import { NextResponse } from "next/server";
 import type { FunnelEventPayload } from "@/lib/types";
 
+function shouldForwardEvent(eventName: string) {
+  return eventName.endsWith("_page_view");
+}
+
 function compactSession(payload: FunnelEventPayload) {
   const { session } = payload;
   return {
@@ -11,6 +15,17 @@ function compactSession(payload: FunnelEventPayload) {
     session_id: session.session_id,
     lead_id: session.lead_id,
     browser_id: session.browser_id,
+    first_name: session.answers.first_name,
+    last_name: session.answers.last_name,
+    name: [session.answers.first_name, session.answers.last_name].filter(Boolean).join(" "),
+    email: session.answers.email,
+    phone: session.answers.phone,
+    city: session.answers.city,
+    state: session.answers.state,
+    utm_campaign: session.answers.utm_campaign ?? session.utm.utm_campaign,
+    medium: session.answers.utm_medium ?? session.utm.utm_medium,
+    utm_source: session.answers.utm_source ?? session.utm.utm_source,
+    answers: session.answers,
     utm: session.utm,
     identity: {
       first_name: session.answers.first_name,
@@ -40,6 +55,10 @@ export async function POST(request: Request) {
   const payload = (await request.json()) as FunnelEventPayload;
   const webhookPayload = compactSession(payload);
   const webhookUrl = process.env.GHL_WEBHOOK_URL || process.env.QUESTION_WEBHOOK_URL;
+
+  if (!shouldForwardEvent(payload.event_name)) {
+    return NextResponse.json({ ok: true, forwarded: false, skipped: true });
+  }
 
   if (webhookUrl) {
     try {

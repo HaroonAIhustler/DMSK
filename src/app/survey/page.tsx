@@ -131,22 +131,6 @@ const resultLoadingMessages = [
   "Almost done - compiling final results"
 ];
 
-const questionWebhookFields: Partial<Record<keyof SurveyAnswers, string>> = {
-  city: "preferred_job_location",
-  current_career_situation: "current_career_situation",
-  educational_qualification: "educational_qualification",
-  graduation_year: "when_did_you_graduates",
-  career_flexibility_motivation: "flexibility_looking_for",
-  current_work_field: "field_working_in",
-  certification: "professional_certification",
-  social_activity: "social_platforms",
-  ads_posts_observation: "when_you_see_ads",
-  online_ads_curiosity: "are_you_curious",
-  retargeting_curiosity: "do_you_wondered",
-  tool_comfort: "are_you_comfortable_learning",
-  ai_proficiency: "ai_proficiency_level"
-};
-
 function isCollegeStudent(answers: SurveyAnswers) {
   return answers.current_career_situation === "I am currently in college - Studying";
 }
@@ -246,45 +230,6 @@ function buildWebhookContact(answers: SurveyAnswers) {
   };
 }
 
-function sendQuestionWebhook({
-  question,
-  questionKey,
-  contactField,
-  answer,
-  answers,
-  session
-}: {
-  question: string;
-  questionKey: string;
-  contactField?: string;
-  answer: string;
-  answers: SurveyAnswers;
-  session?: FunnelSession | null;
-}) {
-  const contact = buildWebhookContact(answers);
-  const fieldKey = contactField ?? (questionKey === "field_of_study" ? "field_of_study__detail" : questionWebhookFields[questionKey as keyof SurveyAnswers]);
-
-  void fetch("/api/question-webhook", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      event_name: "survey_question_answered",
-      event_timestamp: new Date().toISOString(),
-      session_id: session?.session_id,
-      lead_id: session?.lead_id,
-      browser_id: session?.browser_id,
-      question,
-      question_key: questionKey,
-      contact_field: fieldKey,
-      answer,
-      contact,
-      ...contact,
-      answers,
-      utm: session?.utm
-    })
-  }).catch(() => undefined);
-}
-
 function sendSurveyWebhook(eventName: string, answers: SurveyAnswers, session?: FunnelSession | null) {
   const contact = buildWebhookContact(answers);
 
@@ -360,22 +305,10 @@ export default function SurveyPage() {
       sendFunnelEvent("survey_started", "survey", "/survey", session);
     }
     const nextAnswers = updateAnswer(currentQuestion.key, value);
-    const latest = loadSession() ?? session;
-    sendFunnelEvent("survey_question_answered", "survey", "/survey", latest, {
-      question_key: currentQuestion.key,
-      answer: value
-    });
-    sendQuestionWebhook({
-      question: currentQuestion.question,
-      questionKey: String(currentQuestion.key),
-      answer: value,
-      answers: nextAnswers,
-      session: latest
-    });
     window.setTimeout(() => {
       setError("");
       setStepIndex((current) => {
-        const nextVisibleQuestions = getVisibleQuestions({ ...answers, [currentQuestion.key]: value });
+        const nextVisibleQuestions = getVisibleQuestions(nextAnswers);
         return Math.min(current + 1, nextVisibleQuestions.length);
       });
     }, 180);
@@ -489,28 +422,6 @@ export default function SurveyPage() {
         setHasStarted(true);
         sendFunnelEvent("survey_started", "survey", "/survey", latest);
       }
-      sendFunnelEvent("survey_question_answered", "survey", "/survey", latest, {
-        question_key: "city",
-        answer: `${nextAnswers.city}, ${nextAnswers.state}`
-      });
-      sendQuestionWebhook({
-        question: "What is your preferred job location? - city",
-        questionKey: "city",
-        contactField: "preferred_job_location",
-        answer: nextAnswers.city,
-        answers: nextAnswers,
-        session: latest
-      });
-      if (nextAnswers.state) {
-        sendQuestionWebhook({
-          question: "What is your preferred job location? - state",
-          questionKey: "state",
-          contactField: "preferred_job_state",
-          answer: nextAnswers.state,
-          answers: nextAnswers,
-          session: latest
-        });
-      }
     }
     window.setTimeout(() => {
       setError("");
@@ -520,31 +431,7 @@ export default function SurveyPage() {
 
   function handleFieldStudySelect(value: string) {
     if (!session) return;
-    const nextAnswers = updateAnswer("field_of_study", value);
-    const latest = loadSession() ?? session;
-    sendFunnelEvent("survey_question_answered", "survey", "/survey", latest, {
-      question_key: "field_of_study",
-      answer: value
-    });
-    const mainFieldOfStudy = fieldStudyMain(value);
-    if (mainFieldOfStudy) {
-      sendQuestionWebhook({
-        question: "What is your field of study?",
-        questionKey: "field_of_study_main",
-        contactField: "when_did_you_graduates",
-        answer: mainFieldOfStudy,
-        answers: nextAnswers,
-        session: latest
-      });
-    }
-    sendQuestionWebhook({
-      question: "What is your field of study? - city-select",
-      questionKey: "field_of_study__detail",
-      contactField: "field_of_study__detail",
-      answer: value,
-      answers: nextAnswers,
-      session: latest
-    });
+    updateAnswer("field_of_study", value);
     window.setTimeout(() => {
       setError("");
       setStepIndex((current) => Math.min(current + 1, visibleQuestions.length));

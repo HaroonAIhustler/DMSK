@@ -4167,14 +4167,12 @@ a {
   }
 
   .fit-video-benefits {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 14px;
     width: 100%;
   }
 
   .fit-video-benefits span {
-    grid-template-columns: auto minmax(0, 1fr);
-    justify-items: start;
     align-items: center;
     text-align: left;
   }
@@ -4183,6 +4181,19 @@ a {
     width: 28px;
     height: 28px;
     padding: 14px;
+  }
+
+  .fit-video-preview {
+    order: 1;
+  }
+
+  .fit-video-cta {
+    order: 2;
+    margin-top: -8px;
+  }
+
+  .fit-video-offer-content {
+    order: 3;
   }
 
   .fit-kit-preview-image {
