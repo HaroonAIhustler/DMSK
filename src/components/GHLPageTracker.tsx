@@ -20,7 +20,8 @@ export function GHLPageTracker() {
       if (typeof window !== "undefined" && window.dataLayer) {
         window.dataLayer.push({ event: "pageview", page: pathname });
       }
-      // Send page view via GHL tracker directly so SPA route changes get tracked
+      // Send page view via tracker directly for SPA route changes
+      // Include page metadata at top level — required by GHL API
       const lc = (window as typeof window & { _lcTracking?: LcTracking })._lcTracking;
       const sendEvent = lc?.tracker?.sendEvent?.bind(lc.tracker);
       if (sendEvent) {
@@ -29,7 +30,9 @@ export function GHLPageTracker() {
           timestamp: Date.now(),
           url: window.location.href,
           title: document.title,
+          path: window.location.pathname,
           referrer: document.referrer,
+          userAgent: navigator.userAgent,
         });
       }
     } catch { /* non-critical */ }

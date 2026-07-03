@@ -170,6 +170,7 @@ function identifyContactForGHL(answers: SurveyAnswers) {
   } catch { /* non-critical */ }
 
   // Send form submission event directly via GHL tracker (bypasses MutationObserver timing issue)
+  // Must include url/title/path/referrer/userAgent at top level — GHL API requires them
   window.setTimeout(() => {
     try {
       type LcTracking = { tracker?: { sendEvent?: (e: Record<string, unknown>) => void } };
@@ -180,6 +181,11 @@ function identifyContactForGHL(answers: SurveyAnswers) {
           type: "external_form_submission",
           timestamp: Date.now(),
           formId: "survey-form",
+          url: window.location.href,
+          title: document.title,
+          path: window.location.pathname,
+          referrer: document.referrer,
+          userAgent: navigator.userAgent,
           formData: {
             email: answers.email ?? "",
             phone: answers.phone ?? "",
