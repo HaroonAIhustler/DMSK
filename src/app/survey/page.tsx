@@ -231,7 +231,7 @@ function buildWebhookContact(answers: SurveyAnswers) {
 }
 
 async function sendSurveyWebhook(eventName: string, answers: SurveyAnswers, session?: FunnelSession | null) {
-  const contact = buildWebhookContact(answers);
+  const contact = { ...buildWebhookContact(answers), encr: session?.result?.fit_score };
   const payload = {
     event_name: eventName,
     event_timestamp: new Date().toISOString(),

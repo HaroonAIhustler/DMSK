@@ -37,7 +37,8 @@ function normalizeWebhookPayload(payload: Record<string, unknown>) {
     email: String(contact.email ?? answers.email ?? payload.email ?? ""),
     phone: String(contact.phone ?? answers.phone ?? payload.phone ?? ""),
     city: String(contact.city ?? answers.city ?? payload.city ?? ""),
-    state: String(contact.state ?? answers.state ?? payload.state ?? "")
+    state: String(contact.state ?? answers.state ?? payload.state ?? ""),
+    encr: result.fit_score ?? contact.encr ?? payload.encr
   };
 
   return {
@@ -57,6 +58,7 @@ function normalizeWebhookPayload(payload: Record<string, unknown>) {
     utm_campaign: mergedContact.utm_campaign,
     medium: mergedContact.medium,
     utm_source: mergedContact.utm_source,
+    encr: mergedContact.encr,
     result,
     utm,
     contact: mergedContact,
