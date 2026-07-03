@@ -81,6 +81,7 @@ export async function POST(request: Request) {
 
   try {
     const normalizedPayload = normalizeWebhookPayload(payload as Record<string, unknown>);
+    console.info("[webhook] encr:", normalizedPayload.encr, "contact.encr:", (normalizedPayload.contact as Record<string, unknown>)?.encr);
     const response = await fetch(webhookUrl, {
       method: "POST",
       headers: { "Content-Type": "application/json" },

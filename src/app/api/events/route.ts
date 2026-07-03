@@ -88,26 +88,11 @@ function compactSession(payload: FunnelEventPayload) {
 export async function POST(request: Request) {
   const payload = (await request.json()) as FunnelEventPayload;
   const webhookPayload = compactSession(payload);
-  const webhookUrl = process.env.WEBHOOK_URL || process.env.GHL_WEBHOOK_URL || process.env.QUESTION_WEBHOOK_URL;
 
   if (!shouldForwardEvent(payload.event_name)) {
     return NextResponse.json({ ok: true, forwarded: false, skipped: true });
   }
 
-  if (webhookUrl) {
-    try {
-      const response = await fetch(webhookUrl, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(webhookPayload)
-      });
-
-      return NextResponse.json({ ok: response.ok, forwarded: true, status: response.status });
-    } catch {
-      return NextResponse.json({ ok: false, forwarded: false, error: "Webhook request failed" }, { status: 502 });
-    }
-  }
-
-  console.info("AIGS funnel event", webhookPayload);
+  console.info("AIGS funnel event", webhookPayload.event_name, webhookPayload.session_id);
   return NextResponse.json({ ok: true, forwarded: false });
 }
