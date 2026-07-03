@@ -45,7 +45,7 @@ function aiMarketingText(text: string) {
 
 export default function ResultsPage() {
   const [session, setSession] = useState<FunnelSession | null>(null);
-  const [isVideoBonusVisible, setIsVideoBonusVisible] = useState(false);
+  const [isVideoBonusVisible, setIsVideoBonusVisible] = useState(true);
   const router = useRouter();
 
   useEffect(() => {
@@ -254,7 +254,7 @@ export default function ResultsPage() {
             </div>
           </div>
           {isVideoBonusVisible ? (
-            <Link className="fit-result-button fit-result-button--wide fit-result-button--green fit-video-cta" href={BONUS_SESSION_URL} onClick={() => ctaClicked("results_offer_video")}>
+            <Link className="fit-result-button fit-result-button--wide fit-result-button--yellow fit-video-cta" href={BONUS_SESSION_URL} onClick={() => ctaClicked("results_offer_video")}>
               Claim Your Bonus Now! <ArrowRight size={16} />
             </Link>
           ) : null}
