@@ -53,11 +53,9 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             style={{ display: "none", visibility: "hidden" }}
           />
         </noscript>
-        <Script
-          src="https://widget.leadconnectorhq.com/loader.js"
-          data-tracking-id="S3oYl74Av60NEQIC13cQ"
-          strategy="afterInteractive"
-        />
+        <Script id="lc-tracking" strategy="afterInteractive">
+          {`(function(){var s=document.createElement('script');s.src='https://widget.leadconnectorhq.com/loader.js';s.setAttribute('data-tracking-id','S3oYl74Av60NEQIC13cQ');s.async=true;document.head.appendChild(s);})();`}
+        </Script>
         {children}
       </body>
     </html>
