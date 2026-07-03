@@ -4211,6 +4211,22 @@ a {
     color: #ffffff;
   }
 
+  .fit-video-mobile-heading .fit-kit-ai-label {
+    display: inline-flex;
+    width: fit-content;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 16px;
+    border: 1px solid rgba(253, 224, 71, 0.9);
+    border-radius: 8px;
+    background: linear-gradient(120deg, #fef08a, #facc15 52%, #fff7c2);
+    color: #002a78;
+    box-shadow: 0 12px 34px rgba(250, 204, 21, 0.28);
+    font-size: 0.54em;
+    line-height: 1;
+    animation: aiLabelGlow 2.4s ease-in-out infinite;
+  }
+
   .fit-video-mobile-heading h2 strong {
     color: #ffd21f;
   }
