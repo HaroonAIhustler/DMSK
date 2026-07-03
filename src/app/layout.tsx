@@ -53,8 +53,8 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             style={{ display: "none", visibility: "hidden" }}
           />
         </noscript>
-        <Script id="lc-tracking" strategy="afterInteractive">
-          {`(function(){var s=document.createElement('script');s.src='https://widget.leadconnectorhq.com/loader.js';s.setAttribute('data-tracking-id','S3oYl74Av60NEQIC13cQ');s.async=true;document.head.appendChild(s);})();`}
+        <Script id="ghl-tracking" strategy="afterInteractive">
+          {`(function(){var s=document.createElement('script');s.src='https://link.desinelabs.com/js/external-tracking.js';s.setAttribute('data-tracking-id','tk_20528733b6e7433cbc38044d10dda053');s.async=true;document.head.appendChild(s);})();`}
         </Script>
         {children}
       </body>
