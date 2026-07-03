@@ -11,10 +11,33 @@ declare global {
 export default function DmskCareerVideoPage() {
   const videoRef = useRef<HTMLVideoElement>(null);
   const hasTrackedPlayRef = useRef(false);
+  const hasTrackedCompleteRef = useRef(false);
   const [isPlaying, setIsPlaying] = useState(false);
+
+  function getContact() {
+    try {
+      const ud = JSON.parse(localStorage.getItem("_ud") ?? "{}") as Record<string, string>;
+      return { email: ud.email, phone: ud.phone, first_name: ud.first_name, last_name: ud.last_name };
+    } catch { return {}; }
+  }
 
   function unlockBonus() {
     window.parent.postMessage({ type: "dmsk-video-bonus-visible" }, window.location.origin);
+  }
+
+  function trackVideoComplete() {
+    if (hasTrackedCompleteRef.current) return;
+    hasTrackedCompleteRef.current = true;
+
+    window.dataLayer = window.dataLayer || [];
+    window.dataLayer.push({ event: "dmsk_video_complete", video_name: "dmsk_career_bonus" });
+
+    fetch("/api/video-complete", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      keepalive: true,
+      body: JSON.stringify({ ...getContact(), video_name: "dmsk_career_bonus" }),
+    }).catch(() => {});
   }
 
   function trackVideoPlay() {
@@ -31,20 +54,12 @@ export default function DmskCareerVideoPage() {
     window.dataLayer.push(payload);
     window.parent.postMessage({ type: "dmsk-video-play", ...payload }, window.location.origin);
 
-    // Read contact identity from localStorage (written after form submission)
-    const contact = (() => {
-      try {
-        const ud = JSON.parse(localStorage.getItem("_ud") ?? "{}") as Record<string, string>;
-        return { email: ud.email, phone: ud.phone, first_name: ud.first_name, last_name: ud.last_name };
-      } catch { return {}; }
-    })();
-
     // Send video play event to GHL — backend adds "Video Played - DMSK Career" tag
     fetch("/api/video-play", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       keepalive: true,
-      body: JSON.stringify({ ...contact, video_name: "dmsk_career_bonus" }),
+      body: JSON.stringify({ ...getContact(), video_name: "dmsk_career_bonus" }),
     }).catch(() => {});
   }
 
@@ -63,7 +78,10 @@ export default function DmskCareerVideoPage() {
   function handleTimeUpdate() {
     const video = videoRef.current;
     if (!video || !Number.isFinite(video.duration)) return;
-    if (video.duration - video.currentTime <= 15) unlockBonus();
+    if (video.duration - video.currentTime <= 15) {
+      unlockBonus();
+      trackVideoComplete();
+    }
   }
 
   return (
@@ -93,7 +111,7 @@ export default function DmskCareerVideoPage() {
           if (videoRef.current?.paused) void playVideo();
           else videoRef.current?.pause();
         }}
-        onEnded={unlockBonus}
+        onEnded={() => { unlockBonus(); trackVideoComplete(); }}
         onPlay={() => {
           setIsPlaying(true);
           trackVideoPlay();
