@@ -106,10 +106,10 @@ export default function DmskCareerVideoPage() {
             width: 96,
             height: 96,
             placeItems: "center",
-            border: "2px solid rgba(255, 255, 255, 0.9)",
+            border: "3px solid #facc15",
             borderRadius: 999,
-            background: "rgba(15, 23, 42, 0.26)",
-            boxShadow: "0 16px 34px rgba(15, 23, 42, 0.24)",
+            background: "rgba(250, 204, 21, 0.18)",
+            boxShadow: "0 0 0 6px rgba(250, 204, 21, 0.18), 0 16px 34px rgba(0, 0, 0, 0.32)",
             cursor: "pointer",
             transform: "translate(-50%, -50%)",
             animation: "playBounce 1.7s ease-in-out infinite",
@@ -123,7 +123,7 @@ export default function DmskCareerVideoPage() {
               marginLeft: 7,
               borderTop: "20px solid transparent",
               borderBottom: "20px solid transparent",
-              borderLeft: "31px solid #ffffff",
+              borderLeft: "31px solid #facc15",
             }}
           />
         </button>

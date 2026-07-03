@@ -231,7 +231,7 @@ export default function ResultsPage() {
               className="fit-video-preview-media"
               src="/video/dmsk-career"
               title="AI digital marketing career video"
-              loading="lazy"
+              loading="eager"
               allow="autoplay; fullscreen; picture-in-picture"
               allowFullScreen
             />
