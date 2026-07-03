@@ -3,6 +3,10 @@
 import { useEffect, useRef } from "react";
 import { usePathname } from "next/navigation";
 
+type LcTracking = {
+  tracker?: { sendEvent?: (e: Record<string, unknown>) => void };
+};
+
 export function GHLPageTracker() {
   const pathname = usePathname();
   const isFirst = useRef(true);
@@ -12,22 +16,23 @@ export function GHLPageTracker() {
       isFirst.current = false;
       return;
     }
-    // Re-fire page view for SPA route changes so GHL tracks every page
     try {
-      // Push to GTM dataLayer
       if (typeof window !== "undefined" && window.dataLayer) {
         window.dataLayer.push({ event: "pageview", page: pathname });
       }
-      // If GHL tracking exposes a page view method, call it
-      const w = window as typeof window & {
-        GHLExternalTracking?: { trackPageView?: () => void };
-        __lc?: { push?: (args: unknown) => void };
-      };
-      w.GHLExternalTracking?.trackPageView?.();
-      w.__lc?.push?.({ type: "pageview", url: window.location.href, title: document.title });
-    } catch {
-      // non-critical
-    }
+      // Send page view via GHL tracker directly so SPA route changes get tracked
+      const lc = (window as typeof window & { _lcTracking?: LcTracking })._lcTracking;
+      const sendEvent = lc?.tracker?.sendEvent?.bind(lc.tracker);
+      if (sendEvent) {
+        sendEvent({
+          type: "external_script_page_view",
+          timestamp: Date.now(),
+          url: window.location.href,
+          title: document.title,
+          referrer: document.referrer,
+        });
+      }
+    } catch { /* non-critical */ }
   }, [pathname]);
 
   return null;

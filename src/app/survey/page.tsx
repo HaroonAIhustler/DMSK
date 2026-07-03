@@ -156,31 +156,41 @@ function getVisibleQuestions(answers: SurveyAnswers) {
 function identifyContactForGHL(answers: SurveyAnswers) {
   if (typeof window === "undefined") return;
   try {
-    const form = document.createElement("form");
-    form.style.cssText = "display:none;position:absolute;pointer-events:none;opacity:0;";
-    const fields: Record<string, string> = {
-      email: answers.email ?? "",
-      phone: answers.phone ?? "",
-      first_name: answers.first_name ?? "",
-      last_name: answers.last_name ?? "",
-      firstName: answers.first_name ?? "",
-      lastName: answers.last_name ?? "",
-      full_name: [answers.first_name, answers.last_name].filter(Boolean).join(" ")
-    };
-    Object.entries(fields).forEach(([name, value]) => {
-      if (!value) return;
-      const input = document.createElement("input");
-      input.type = name === "email" ? "email" : "text";
-      input.name = name;
-      input.value = value;
-      form.appendChild(input);
-    });
-    document.body.appendChild(form);
-    form.dispatchEvent(new Event("submit", { bubbles: true, cancelable: true }));
-    window.setTimeout(() => { if (form.parentNode) form.parentNode.removeChild(form); }, 200);
-  } catch {
-    // non-critical
-  }
+    // Write contact identity to localStorage so GHL attributes all future page views
+    const existing = (() => {
+      try { return JSON.parse(localStorage.getItem("_ud") ?? "{}"); } catch { return {}; }
+    })();
+    localStorage.setItem("_ud", JSON.stringify({
+      ...existing,
+      email: answers.email ?? existing.email,
+      phone: answers.phone ?? existing.phone,
+      first_name: answers.first_name ?? existing.first_name,
+      last_name: answers.last_name ?? existing.last_name,
+    }));
+  } catch { /* non-critical */ }
+
+  // Send form submission event directly via GHL tracker (bypasses MutationObserver timing issue)
+  window.setTimeout(() => {
+    try {
+      type LcTracking = { tracker?: { sendEvent?: (e: Record<string, unknown>) => void } };
+      const lc = (window as typeof window & { _lcTracking?: LcTracking })._lcTracking;
+      const sendEvent = lc?.tracker?.sendEvent?.bind(lc.tracker);
+      if (sendEvent) {
+        sendEvent({
+          type: "external_form_submission",
+          timestamp: Date.now(),
+          formId: "survey-form",
+          formData: {
+            email: answers.email ?? "",
+            phone: answers.phone ?? "",
+            first_name: answers.first_name ?? "",
+            last_name: answers.last_name ?? "",
+            full_name: [answers.first_name, answers.last_name].filter(Boolean).join(" "),
+          },
+        });
+      }
+    } catch { /* non-critical */ }
+  }, 500);
 }
 
 function normalizeIndianPhone(value?: string) {
