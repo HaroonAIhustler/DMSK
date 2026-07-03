@@ -53,6 +53,11 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             style={{ display: "none", visibility: "hidden" }}
           />
         </noscript>
+        <Script
+          src="https://widget.leadconnectorhq.com/loader.js"
+          data-tracking-id="S3oYl74Av60NEQIC13cQ"
+          strategy="afterInteractive"
+        />
         {children}
       </body>
     </html>
