@@ -153,6 +153,36 @@ function getVisibleQuestions(answers: SurveyAnswers) {
   });
 }
 
+function identifyContactForGHL(answers: SurveyAnswers) {
+  if (typeof window === "undefined") return;
+  try {
+    const form = document.createElement("form");
+    form.style.cssText = "display:none;position:absolute;pointer-events:none;opacity:0;";
+    const fields: Record<string, string> = {
+      email: answers.email ?? "",
+      phone: answers.phone ?? "",
+      first_name: answers.first_name ?? "",
+      last_name: answers.last_name ?? "",
+      firstName: answers.first_name ?? "",
+      lastName: answers.last_name ?? "",
+      full_name: [answers.first_name, answers.last_name].filter(Boolean).join(" ")
+    };
+    Object.entries(fields).forEach(([name, value]) => {
+      if (!value) return;
+      const input = document.createElement("input");
+      input.type = name === "email" ? "email" : "text";
+      input.name = name;
+      input.value = value;
+      form.appendChild(input);
+    });
+    document.body.appendChild(form);
+    form.dispatchEvent(new Event("submit", { bubbles: true, cancelable: true }));
+    window.setTimeout(() => { if (form.parentNode) form.parentNode.removeChild(form); }, 200);
+  } catch {
+    // non-critical
+  }
+}
+
 function normalizeIndianPhone(value?: string) {
   const phoneDigits = value?.replace(/\D/g, "") ?? "";
   return phoneDigits.length === 12 && phoneDigits.startsWith("91") ? phoneDigits.slice(2) : phoneDigits.slice(0, 10);
@@ -427,6 +457,7 @@ export default function SurveyPage() {
     await sendFunnelEvent("fit_score_calculated", "survey", "/survey", finalSession);
     await sendFunnelEvent("survey_to_results_redirect", "survey", "/survey", finalSession);
     await sendSurveyWebhook("survey_completed", normalizedAnswers, finalSession);
+    identifyContactForGHL(normalizedAnswers);
     await playResultsLoader();
     const resultsPath = result.fit_score < 40 ? "/results/low-fit" : "/results";
     router.push(`${resultsPath}?session_id=${finalSession.session_id}`);

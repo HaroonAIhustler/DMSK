@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Script from "next/script";
+import { GHLPageTracker } from "@/components/GHLPageTracker";
 import "./globals.css";
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://lp.aigrowthstudio.ai";
@@ -56,6 +57,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         <Script id="ghl-tracking" strategy="afterInteractive">
           {`(function(){var s=document.createElement('script');s.src='https://link.desinelabs.com/js/external-tracking.js';s.setAttribute('data-tracking-id','tk_20528733b6e7433cbc38044d10dda053');s.async=true;document.head.appendChild(s);})();`}
         </Script>
+        <GHLPageTracker />
         {children}
       </body>
     </html>
