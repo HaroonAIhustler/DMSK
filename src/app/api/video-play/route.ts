@@ -19,20 +19,22 @@ export async function POST(request: Request) {
     return NextResponse.json({ ok: true, forwarded: false });
   }
 
+  // Send as contact field values so GHL can map them to custom fields
+  // and trigger "Contact Field Changed" workflows — more reliable than event_name filtering
   const payload = {
-    event_name: "video_played",
-    video_name: body.video_name ?? "dmsk_career_bonus",
-    tags: ["Video Played - DMSK Career"],
     email: body.email,
     phone: body.phone,
     first_name: body.first_name,
     last_name: body.last_name,
+    video_played: "Yes",
+    video_played_at: new Date().toISOString(),
     contact: {
       email: body.email,
       phone: body.phone,
       first_name: body.first_name,
       last_name: body.last_name,
-      tags: ["Video Played - DMSK Career"],
+      video_played: "Yes",
+      video_played_at: new Date().toISOString(),
     },
   };
 
