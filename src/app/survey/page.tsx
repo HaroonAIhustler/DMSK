@@ -153,10 +153,30 @@ function getVisibleQuestions(answers: SurveyAnswers) {
   });
 }
 
+const GHL_TRACKING_ID = "tk_20528733b6e7433cbc38044d10dda053";
+const GHL_LOCATION_ID = "S3oYl74Av60NEQIC13cQ";
+
+function getGHLSessionId(): string | undefined {
+  try {
+    const cookieName = `lc_session_${GHL_LOCATION_ID}`;
+    // Try tracker state first (most reliable — same session as page views)
+    type Tracker = { state?: { sessionId?: string } };
+    type LcT = { tracker?: Tracker };
+    const sid = (window as typeof window & { _lcTracking?: LcT })._lcTracking?.tracker?.state?.sessionId;
+    if (sid) return sid;
+    // Fallback: read from cookie
+    const parts = `; ${document.cookie}`.split(`; ${cookieName}=`);
+    if (parts.length === 2) return parts[1].split(";")[0] || undefined;
+    // Last resort: sessionStorage
+    return sessionStorage.getItem(cookieName) ?? undefined;
+  } catch { return undefined; }
+}
+
 function identifyContactForGHL(answers: SurveyAnswers) {
   if (typeof window === "undefined") return;
+
+  // Write identity to localStorage._ud so future page views carry the email
   try {
-    // Write contact identity to localStorage so GHL attributes all future page views
     const existing = (() => {
       try { return JSON.parse(localStorage.getItem("_ud") ?? "{}"); } catch { return {}; }
     })();
@@ -169,34 +189,46 @@ function identifyContactForGHL(answers: SurveyAnswers) {
     }));
   } catch { /* non-critical */ }
 
-  // Send form submission event directly via GHL tracker (bypasses MutationObserver timing issue)
-  // Must include url/title/path/referrer/userAgent at top level — GHL API requires them
-  window.setTimeout(() => {
-    try {
-      type LcTracking = { tracker?: { sendEvent?: (e: Record<string, unknown>) => void } };
-      const lc = (window as typeof window & { _lcTracking?: LcTracking })._lcTracking;
-      const sendEvent = lc?.tracker?.sendEvent?.bind(lc.tracker);
-      if (sendEvent) {
-        sendEvent({
-          type: "external_form_submission",
-          timestamp: Date.now(),
-          formId: "survey-form",
-          url: window.location.href,
-          title: document.title,
-          path: window.location.pathname,
-          referrer: document.referrer,
-          userAgent: navigator.userAgent,
-          formData: {
-            email: answers.email ?? "",
-            phone: answers.phone ?? "",
-            first_name: answers.first_name ?? "",
-            last_name: answers.last_name ?? "",
-            full_name: [answers.first_name, answers.last_name].filter(Boolean).join(" "),
-          },
-        });
-      }
-    } catch { /* non-critical */ }
-  }, 500);
+  // POST form submission event directly to GHL tracking API
+  // Using keepalive so it survives page navigation; reads the real session ID
+  // so GHL links this email to the same session that already has page views
+  const sessionId = getGHLSessionId();
+  const deviceType = /Mobi|Android/i.test(navigator.userAgent) ? "mobile" : "desktop";
+  const pageUrl = window.location.href;
+  const pageTitle = document.title;
+  const pagePath = window.location.pathname;
+  const referrer = document.referrer;
+
+  fetch("https://backend.leadconnectorhq.com/external-tracking/events", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    keepalive: true,
+    body: JSON.stringify({
+      type: "external_form_submission",
+      timestamp: Date.now(),
+      trackingId: GHL_TRACKING_ID,
+      locationId: GHL_LOCATION_ID,
+      sessionId,
+      formId: "survey-form",
+      url: pageUrl,
+      title: pageTitle,
+      path: pagePath,
+      referrer,
+      userAgent: navigator.userAgent,
+      formData: {
+        email: answers.email ?? "",
+        phone: answers.phone ?? "",
+        first_name: answers.first_name ?? "",
+        last_name: answers.last_name ?? "",
+        full_name: [answers.first_name, answers.last_name].filter(Boolean).join(" "),
+      },
+      properties: {
+        sessionId,
+        locationId: GHL_LOCATION_ID,
+        deviceType,
+      },
+    }),
+  }).catch(() => { /* non-critical */ });
 }
 
 function normalizeIndianPhone(value?: string) {
