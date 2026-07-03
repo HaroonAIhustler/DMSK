@@ -30,6 +30,22 @@ export default function DmskCareerVideoPage() {
     window.dataLayer = window.dataLayer || [];
     window.dataLayer.push(payload);
     window.parent.postMessage({ type: "dmsk-video-play", ...payload }, window.location.origin);
+
+    // Read contact identity from localStorage (written after form submission)
+    const contact = (() => {
+      try {
+        const ud = JSON.parse(localStorage.getItem("_ud") ?? "{}") as Record<string, string>;
+        return { email: ud.email, phone: ud.phone, first_name: ud.first_name, last_name: ud.last_name };
+      } catch { return {}; }
+    })();
+
+    // Send video play event to GHL — backend adds "Video Played - DMSK Career" tag
+    fetch("/api/video-play", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      keepalive: true,
+      body: JSON.stringify({ ...contact, video_name: "dmsk_career_bonus" }),
+    }).catch(() => {});
   }
 
   async function playVideo() {
