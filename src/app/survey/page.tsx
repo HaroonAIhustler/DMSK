@@ -18,6 +18,12 @@ import { captureUtm } from "@/lib/utm";
 import { createOrLoadSession, ensureLeadId, loadSession, saveAnswers, saveResult, saveSession } from "@/lib/storage";
 import type { FunnelSession, SurveyAnswers } from "@/lib/types";
 
+declare global {
+  interface Window {
+    dataLayer?: Array<Record<string, unknown>>;
+  }
+}
+
 type Question = {
   key: keyof SurveyAnswers;
   question: string;
@@ -499,6 +505,9 @@ export default function SurveyPage() {
       setIsSubmitting(false);
       return;
     }
+
+    window.dataLayer = window.dataLayer || [];
+    window.dataLayer.push({ event: "generate_lead", lead_id: finalSession.lead_id });
 
     await sendFunnelEvent("lead_details_submitted", "survey", "/survey", finalSession);
     await sendFunnelEvent("survey_completed", "survey", "/survey", finalSession);
