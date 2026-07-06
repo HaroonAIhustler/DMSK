@@ -8,7 +8,11 @@ declare global {
   }
 }
 
-export default function DmskCareerVideoPage() {
+type DmskCareerVideoPlayerProps = {
+  onBonusVisible?: () => void;
+};
+
+export function DmskCareerVideoPlayer({ onBonusVisible }: DmskCareerVideoPlayerProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const hasTrackedPlayRef = useRef(false);
   const hasTrackedCompleteRef = useRef(false);
@@ -19,10 +23,6 @@ export default function DmskCareerVideoPage() {
       const ud = JSON.parse(localStorage.getItem("_ud") ?? "{}") as Record<string, string>;
       return { email: ud.email, phone: ud.phone, first_name: ud.first_name, last_name: ud.last_name };
     } catch { return {}; }
-  }
-
-  function unlockBonus() {
-    window.parent.postMessage({ type: "dmsk-video-bonus-visible" }, window.location.origin);
   }
 
   function trackVideoComplete() {
@@ -44,15 +44,12 @@ export default function DmskCareerVideoPage() {
     if (hasTrackedPlayRef.current) return;
     hasTrackedPlayRef.current = true;
 
-    const payload = {
+    window.dataLayer = window.dataLayer || [];
+    window.dataLayer.push({
       event: "dmsk_video_play",
       video_name: "dmsk_career_bonus",
       video_src: "/assets/dmsk-career-bonus-video.mp4",
-    };
-
-    window.dataLayer = window.dataLayer || [];
-    window.dataLayer.push(payload);
-    window.parent.postMessage({ type: "dmsk-video-play", ...payload }, window.location.origin);
+    });
 
     // Send video play event to GHL — backend adds "Video Played - DMSK Career" tag
     fetch("/api/video-play", {
@@ -79,39 +76,23 @@ export default function DmskCareerVideoPage() {
     const video = videoRef.current;
     if (!video || !Number.isFinite(video.duration)) return;
     if (video.duration - video.currentTime <= 15) {
-      unlockBonus();
+      onBonusVisible?.();
       trackVideoComplete();
     }
   }
 
   return (
-    <main
-      style={{
-        width: "100vw",
-        height: "100vh",
-        margin: 0,
-        overflow: "hidden",
-        background: "#ffffff",
-      }}
-    >
-      <style>{`
-        @keyframes playBounce {
-          0%, 100% { transform: translate(-50%, -50%) scale(1); }
-          30% { transform: translate(-50%, calc(-50% - 10px)) scale(1.04); }
-          55% { transform: translate(-50%, calc(-50% + 4px)) scale(0.98); }
-          75% { transform: translate(-50%, calc(-50% - 3px)) scale(1.02); }
-        }
-      `}</style>
+    <div style={{ position: "relative", width: "100%", height: "100%" }}>
       <video
         ref={videoRef}
         src="/assets/dmsk-career-bonus-video.mp4"
-        preload="metadata"
+        preload="none"
         playsInline
         onClick={() => {
           if (videoRef.current?.paused) void playVideo();
           else videoRef.current?.pause();
         }}
-        onEnded={() => { unlockBonus(); trackVideoComplete(); }}
+        onEnded={() => { onBonusVisible?.(); trackVideoComplete(); }}
         onPlay={() => {
           setIsPlaying(true);
           trackVideoPlay();
@@ -137,8 +118,8 @@ export default function DmskCareerVideoPage() {
             left: "50%",
             zIndex: 2,
             display: "grid",
-            width: 96,
-            height: 96,
+            width: 76,
+            height: 76,
             placeItems: "center",
             border: "3px solid #ef4444",
             borderRadius: 999,
@@ -146,7 +127,6 @@ export default function DmskCareerVideoPage() {
             boxShadow: "0 0 0 6px rgba(239, 68, 68, 0.18), 0 16px 34px rgba(0, 0, 0, 0.32)",
             cursor: "pointer",
             transform: "translate(-50%, -50%)",
-            animation: "playBounce 1.7s ease-in-out infinite",
           }}
         >
           <span
@@ -154,14 +134,14 @@ export default function DmskCareerVideoPage() {
             style={{
               width: 0,
               height: 0,
-              marginLeft: 7,
-              borderTop: "20px solid transparent",
-              borderBottom: "20px solid transparent",
-              borderLeft: "31px solid #ef4444",
+              marginLeft: 6,
+              borderTop: "16px solid transparent",
+              borderBottom: "16px solid transparent",
+              borderLeft: "25px solid #ef4444",
             }}
           />
         </button>
       ) : null}
-    </main>
+    </div>
   );
 }

@@ -22,6 +22,7 @@ import {
   Target,
   Users,
 } from "lucide-react";
+import { DmskCareerVideoPlayer } from "@/components/DmskCareerVideoPlayer";
 import { LogoHeader } from "@/components/LogoHeader";
 import { MissingSession } from "@/components/MissingSession";
 import { calculateFitResult } from "@/lib/calculator";
@@ -64,18 +65,6 @@ export default function ResultsPage() {
       sendFunnelEvent("freelancer_section_viewed", "results", "/results", loaded);
     }
   }, [router]);
-
-  useEffect(() => {
-    function handleVideoMessage(event: MessageEvent) {
-      if (event.origin !== window.location.origin) return;
-      if (event.data?.type === "dmsk-video-bonus-visible") {
-        setIsVideoBonusVisible(true);
-      }
-    }
-
-    window.addEventListener("message", handleVideoMessage);
-    return () => window.removeEventListener("message", handleVideoMessage);
-  }, []);
 
   if (!session?.result) return <MissingSession />;
 
@@ -227,14 +216,7 @@ export default function ResultsPage() {
           </div>
 
           <div className="fit-video-preview" aria-label="AI digital marketing career video preview">
-            <iframe
-              className="fit-video-preview-media"
-              src="/video/dmsk-career"
-              title="AI digital marketing career video"
-              loading="eager"
-              allow="autoplay; fullscreen; picture-in-picture"
-              allowFullScreen
-            />
+            <DmskCareerVideoPlayer onBonusVisible={() => setIsVideoBonusVisible(true)} />
           </div>
 
           <div className="fit-video-offer-content">
