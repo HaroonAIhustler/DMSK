@@ -28,22 +28,23 @@ export function ContactForm({ answers, error, onChange, onSubmit, isSubmitting =
 
       <div className="form-grid">
         <label>
-          First name
-          <input value={answers.first_name ?? ""} onChange={(event) => onChange("first_name", event.target.value)} placeholder="First name" />
+          First name *
+          <input required value={answers.first_name ?? ""} onChange={(event) => onChange("first_name", event.target.value)} placeholder="First name" />
         </label>
         <label>
-          Last name
-          <input value={answers.last_name ?? ""} onChange={(event) => onChange("last_name", event.target.value)} placeholder="Last name" />
+          Last name *
+          <input required value={answers.last_name ?? ""} onChange={(event) => onChange("last_name", event.target.value)} placeholder="Last name" />
         </label>
         <label>
-          Email
-          <input value={answers.email ?? ""} onChange={(event) => onChange("email", event.target.value)} placeholder="you@example.com" type="email" />
+          Email *
+          <input required value={answers.email ?? ""} onChange={(event) => onChange("email", event.target.value)} placeholder="you@example.com" type="email" />
         </label>
         <label>
-          WhatsApp number
+          WhatsApp number *
           <div className="phone-input-wrap">
             <span aria-hidden="true">+91</span>
             <input
+              required
               value={phoneValue}
               onChange={(event) => onChange("phone", cleanPhoneInput(event.target.value))}
               placeholder="98765 43210"

@@ -246,6 +246,7 @@ function validateContact(answers: SurveyAnswers) {
   const normalizedPhone = normalizeIndianPhone(answers.phone);
 
   if (!answers.first_name?.trim()) return "Please enter your first name.";
+  if (!answers.last_name?.trim()) return "Please enter your last name.";
   if (!answers.email?.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(answers.email)) return "Please enter a valid email address.";
   if (!/^[6-9]\d{9}$/.test(normalizedPhone)) return "Please enter a valid 10-digit WhatsApp number.";
   return "";
