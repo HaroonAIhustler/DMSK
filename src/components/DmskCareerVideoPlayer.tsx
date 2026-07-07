@@ -109,39 +109,53 @@ export function DmskCareerVideoPlayer({ onBonusVisible }: DmskCareerVideoPlayerP
         }}
       />
       {!isPlaying ? (
-        <button
-          type="button"
-          aria-label="Play AI digital marketing career video"
-          onClick={() => void playVideo()}
-          style={{
-            position: "absolute",
-            top: "50%",
-            left: "50%",
-            zIndex: 2,
-            display: "grid",
-            width: 76,
-            height: 76,
-            placeItems: "center",
-            border: "3px solid #56ab90",
-            borderRadius: 999,
-            background: "rgba(86, 171, 144, 0.18)",
-            boxShadow: "0 0 0 6px rgba(86, 171, 144, 0.18), 0 16px 34px rgba(0, 0, 0, 0.32)",
-            cursor: "pointer",
-            transform: "translate(-50%, -50%)",
-          }}
-        >
-          <span
-            aria-hidden="true"
+        <>
+          <style>{`
+            @keyframes dmskPlayBounce {
+              0%, 100% { transform: translate(-50%, -50%) scale(1); }
+              30% { transform: translate(-50%, calc(-50% - 12px)) scale(1.08); }
+              55% { transform: translate(-50%, calc(-50% + 5px)) scale(0.96); }
+              75% { transform: translate(-50%, calc(-50% - 4px)) scale(1.04); }
+            }
+            @keyframes dmskPlayGlow {
+              0%, 100% { box-shadow: 0 0 0 8px rgba(86, 171, 144, 0.25), 0 18px 38px rgba(0, 0, 0, 0.36); }
+              50% { box-shadow: 0 0 0 18px rgba(86, 171, 144, 0.12), 0 18px 38px rgba(0, 0, 0, 0.36); }
+            }
+          `}</style>
+          <button
+            type="button"
+            aria-label="Play AI digital marketing career video"
+            onClick={() => void playVideo()}
             style={{
-              width: 0,
-              height: 0,
-              marginLeft: 6,
-              borderTop: "16px solid transparent",
-              borderBottom: "16px solid transparent",
-              borderLeft: "25px solid #56ab90",
+              position: "absolute",
+              top: "50%",
+              left: "50%",
+              zIndex: 2,
+              display: "grid",
+              width: 104,
+              height: 104,
+              placeItems: "center",
+              border: "4px solid #56ab90",
+              borderRadius: 999,
+              background: "rgba(86, 171, 144, 0.22)",
+              cursor: "pointer",
+              transform: "translate(-50%, -50%)",
+              animation: "dmskPlayBounce 1.6s ease-in-out infinite, dmskPlayGlow 1.6s ease-in-out infinite",
             }}
-          />
-        </button>
+          >
+            <span
+              aria-hidden="true"
+              style={{
+                width: 0,
+                height: 0,
+                marginLeft: 8,
+                borderTop: "21px solid transparent",
+                borderBottom: "21px solid transparent",
+                borderLeft: "33px solid #56ab90",
+              }}
+            />
+          </button>
+        </>
       ) : null}
     </div>
   );
