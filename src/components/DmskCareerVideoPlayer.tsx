@@ -86,6 +86,7 @@ export function DmskCareerVideoPlayer({ onBonusVisible }: DmskCareerVideoPlayerP
       <video
         ref={videoRef}
         src="/assets/dmsk-career-bonus-video.mp4"
+        poster="/assets/dmsk-career-poster.jpg"
         preload="none"
         playsInline
         onClick={() => {
