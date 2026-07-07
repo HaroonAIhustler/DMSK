@@ -174,6 +174,22 @@ export function DmskCareerYouTubePlayer({ videoId, onBonusVisible }: DmskCareerY
     <div style={{ position: "relative", width: "100%", height: "100%", background: "#071638" }}>
       <div ref={containerRef} style={{ width: "100%", height: "100%" }} />
       {!isPlaying ? (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img
+          src="/assets/dmsk-career-poster.jpg"
+          alt=""
+          aria-hidden="true"
+          style={{
+            position: "absolute",
+            inset: 0,
+            width: "100%",
+            height: "100%",
+            objectFit: "cover",
+            zIndex: 1,
+          }}
+        />
+      ) : null}
+      {!isPlaying ? (
         <button
           type="button"
           aria-label="Play AI digital marketing career video"
