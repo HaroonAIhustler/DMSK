@@ -22,7 +22,7 @@ import {
   Target,
   Users,
 } from "lucide-react";
-import { DmskCareerVideoPlayer } from "@/components/DmskCareerVideoPlayer";
+import { DmskCareerYouTubePlayer } from "@/components/DmskCareerYouTubePlayer";
 import { LogoHeader } from "@/components/LogoHeader";
 import { MissingSession } from "@/components/MissingSession";
 import { calculateFitResult } from "@/lib/calculator";
@@ -216,7 +216,7 @@ export default function ResultsPage() {
           </div>
 
           <div className="fit-video-preview" aria-label="AI digital marketing career video preview">
-            <DmskCareerVideoPlayer onBonusVisible={() => setIsVideoBonusVisible(true)} />
+            <DmskCareerYouTubePlayer videoId="0aQpflVj8OY" onBonusVisible={() => setIsVideoBonusVisible(true)} />
           </div>
 
           <div className="fit-video-offer-content">
