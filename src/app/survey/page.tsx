@@ -506,7 +506,20 @@ export default function SurveyPage() {
     }
 
     window.dataLayer = window.dataLayer || [];
-    window.dataLayer.push({ event: "generate_lead", lead_id: finalSession.lead_id });
+    window.dataLayer.push({
+      event: "generate_lead",
+      lead_id: finalSession.lead_id,
+      event_id: `${finalSession.lead_id}_${Date.now()}`,
+      email: normalizedAnswers.email,
+      whatsapp_number: normalizedAnswers.phone,
+      first_name: normalizedAnswers.first_name,
+      last_name: normalizedAnswers.last_name,
+      offer_price: 199,
+      lead_source: normalizedAnswers.utm_source || "organic",
+      utm_source: normalizedAnswers.utm_source,
+      utm_campaign: normalizedAnswers.utm_campaign,
+      utm_medium: normalizedAnswers.utm_medium,
+    });
 
     await sendFunnelEvent("lead_details_submitted", "survey", "/survey", finalSession);
     await sendFunnelEvent("survey_completed", "survey", "/survey", finalSession);
