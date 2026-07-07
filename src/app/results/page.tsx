@@ -107,12 +107,12 @@ export default function ResultsPage() {
     "Get 100% Placement support"
   ];
   const faqs = [
-    { question: "What do I get in this offer?", answer: "You get a short AI digital marketing career video, the 5-day starter roadmap, bonus free tools, templates, project ideas, and practical next steps for jobs or freelance work." },
+    { question: "Is Digital Marketing a Good career option", answer: "Yes. Digital marketing is a good career option with strong job demand, work-from-home opportunities, and freelance earning options alongside full-time roles." },
     { question: "Are the bonus tools free?", answer: "Yes. The offer includes bonus free AI and AI digital marketing tools/resources to help you research, create content, plan campaigns, and build your first proof of work." },
-    { question: "Do I need prior experience?", answer: "No. The path is designed for beginners and freshers. It starts with the basics, then shows how AI tools can help you learn and execute faster." },
-    { question: "What placement support is included?", answer: "You get guidance on the right job roles, resume positioning, LinkedIn profile improvement, interview preparation, and next steps to apply for AI digital marketing roles." },
-    { question: "Do I get expert consultation?", answer: "Yes. The bonus includes a 1-1 expert consultation along with AI resume builder, AI LinkedIn profile optimizer, and AI interview preparation support." },
-    { question: "How do I unlock the bonus?", answer: "Watch the video till the end to unlock free bonus access.." }
+    { question: "Do I need prior experience?", answer: "No, you dont need prior experience to get started." },
+    { question: "Do I get 100% placement support", answer: "Yes, you get 100% placement support along with Interview assistance from AI Growth Studio." },
+    { question: "Do I get expert consultation?", answer: "Yes. The bonus includes a 1-1 expert consultation with experts to discuss your career path." },
+    { question: "How do I get started", answer: "Talk to one of our experts by unlocking the bonus to discuss your career options." }
   ];
 
   async function ctaClicked(location = "results_primary") {
@@ -211,7 +211,7 @@ export default function ResultsPage() {
           <div className="fit-video-mobile-heading">
             <h2>
               <span className="fit-kit-ai-label"><Sparkles size={22} /> AI Powered</span>
-              <span>Digital Marketers have <strong>10,000+</strong> Job opening for Freshers in India</span>
+              <span><strong>Start earning 35,000+ per month</strong> as AI skilled Digital Marketer in less than 30 days</span>
             </h2>
           </div>
 
@@ -223,9 +223,9 @@ export default function ResultsPage() {
             <span className="fit-kit-offer-badge">Get Expert Consultation</span>
             <h2>
               <span className="fit-kit-ai-label"><Sparkles size={22} /> AI Powered</span>
-              <span>Digital Marketers have <strong>10,000+</strong> Job opening for Freshers in India</span>
+              <span><strong>Start earning 35,000+ per month</strong> as AI skilled Digital Marketer in less than 30 days</span>
             </h2>
-            <p><strong>Watch this 2 mins video</strong> to uncover more benefits and unlock bonus at the end of the video</p>
+            <p><strong>Watch this 2 mins video</strong> to see how and unlock bonus at the end of the video</p>
             <div className="fit-video-bonus-label">Free Bonus includes</div>
 
             <div className="fit-video-benefits">

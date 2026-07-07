@@ -117,16 +117,14 @@ const questions: Question[] = [
 ];
 
 const professionalImages = [
-  "/assets/community-professional-01.webp",
-  "/assets/community-professional-02.webp",
-  "/assets/community-professional-03.webp",
-  "/assets/community-professional-04.webp",
-  "/assets/community-professional-05.webp",
-  "/assets/community-professional-06.webp",
-  "/assets/community-professional-07.webp",
-  "/assets/community-professional-08.webp",
-  "/assets/community-professional-09.webp",
-  "/assets/community-professional-10.webp"
+  "/assets/testimonial-student-01.jpg",
+  "/assets/testimonial-student-02.jpg",
+  "/assets/testimonial-student-03.jpg",
+  "/assets/testimonial-student-04.jpg",
+  "/assets/testimonial-student-05.jpg",
+  "/assets/testimonial-student-06.jpg",
+  "/assets/testimonial-student-07.jpg",
+  "/assets/testimonial-student-08.jpg"
 ];
 
 const resultLoadingMessages = [
@@ -561,8 +559,9 @@ export default function SurveyPage() {
         <LogoHeader />
         <header className="survey-hero">
           <h1>
-            A Fresher, <span>Digital Marketer with AI Skills</span> earns more than{" "}
-            <span className="survey-hero__green">₹35,000+ per month - even with Zero Experience</span>
+            There are <span className="survey-hero__blue">10,000+ Job requirements for</span>
+            <br />
+            <span className="survey-hero__green">AI Skilled Digital Marketers</span>
           </h1>
           <p className="survey-hero__support">See if you are a right fit in less than a minute</p>
         </header>
@@ -628,7 +627,9 @@ export default function SurveyPage() {
           </section>
 
           <section className="trust-strip" aria-label="AI Growth Studio professional community">
-            <p>Join 2,000+ AI powered Digital Marketers</p>
+            <p>
+              2,000+ Students <span>are already earning 35,000+ per month</span>
+            </p>
             <div className="people-marquee">
               <div className="people-track">
                 {[...professionalImages, ...professionalImages].map((src, index) => (

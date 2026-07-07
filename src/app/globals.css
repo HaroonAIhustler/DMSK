@@ -374,19 +374,24 @@ a {
   margin: 0 auto;
   padding: 24px 0 18px;
   text-align: center;
+  position: static;
 }
 
 .survey-hero h1 {
   margin: 0;
   color: #131b2e;
-  font-size: 27px;
-  font-weight: 700;
-  line-height: 40px;
+  font-size: 31px;
+  font-weight: 800;
+  line-height: 1.22;
   letter-spacing: 0;
 }
 
 .survey-hero h1 span,
 .survey-hero p span {
+  color: #0ea5e9;
+}
+
+.survey-hero h1 .survey-hero__blue {
   color: #0ea5e9;
 }
 
@@ -1012,11 +1017,15 @@ a {
 .trust-strip p {
   margin: 0;
   color: #111827;
-  font-size: clamp(20px, 3vw, 30px);
+  font-size: clamp(21px, 2.4vw, 21px);
   font-weight: 900;
   line-height: 1.15;
   letter-spacing: 0;
   text-transform: none;
+}
+
+.trust-strip p span {
+  color: #111827;
 }
 
 .people-marquee {
@@ -3266,7 +3275,7 @@ a {
 .fit-video-offer-content h2 {
   margin: 0;
   color: #ffffff;
-  font-size: clamp(2rem, 3.25vw, 2.32rem);
+  font-size: clamp(1.6875rem, 2.8vw, 1.6875rem);
   font-weight: 600;
   line-height: 1.12;
   letter-spacing: 0;
@@ -3952,7 +3961,7 @@ a {
 
   .survey-hero h1 {
     font-size: 24px;
-    line-height: 32px;
+    line-height: 1.25;
   }
 
   .survey-hero p {
@@ -4203,8 +4212,8 @@ a {
     display: grid;
     gap: 14px;
     margin: 0;
-    font-size: 2rem;
-    line-height: 1.05;
+    font-size: 1.45rem;
+    line-height: 1.1;
   }
 
   .fit-video-mobile-heading h2 > span:not(.fit-kit-ai-label) {
@@ -4240,6 +4249,11 @@ a {
     order: 3;
     justify-items: center;
     text-align: center;
+  }
+
+  .fit-video-offer-content p {
+    font-size: 0.94rem;
+    line-height: 1.4;
   }
 
   .fit-video-offer-content h2 {
