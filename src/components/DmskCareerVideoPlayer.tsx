@@ -122,10 +122,10 @@ export function DmskCareerVideoPlayer({ onBonusVisible }: DmskCareerVideoPlayerP
             width: 76,
             height: 76,
             placeItems: "center",
-            border: "3px solid #ef4444",
+            border: "3px solid #56ab90",
             borderRadius: 999,
-            background: "rgba(239, 68, 68, 0.18)",
-            boxShadow: "0 0 0 6px rgba(239, 68, 68, 0.18), 0 16px 34px rgba(0, 0, 0, 0.32)",
+            background: "rgba(86, 171, 144, 0.18)",
+            boxShadow: "0 0 0 6px rgba(86, 171, 144, 0.18), 0 16px 34px rgba(0, 0, 0, 0.32)",
             cursor: "pointer",
             transform: "translate(-50%, -50%)",
           }}
@@ -138,7 +138,7 @@ export function DmskCareerVideoPlayer({ onBonusVisible }: DmskCareerVideoPlayerP
               marginLeft: 6,
               borderTop: "16px solid transparent",
               borderBottom: "16px solid transparent",
-              borderLeft: "25px solid #ef4444",
+              borderLeft: "25px solid #56ab90",
             }}
           />
         </button>
