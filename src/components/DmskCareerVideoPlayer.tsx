@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
+import { Volume2, VolumeX } from "lucide-react";
 
 declare global {
   interface Window {
@@ -17,6 +18,7 @@ export function DmskCareerVideoPlayer({ onBonusVisible }: DmskCareerVideoPlayerP
   const hasTrackedPlayRef = useRef(false);
   const hasTrackedCompleteRef = useRef(false);
   const [isPlaying, setIsPlaying] = useState(false);
+  const [isMuted, setIsMuted] = useState(true);
 
   function getContact() {
     try {
@@ -81,14 +83,23 @@ export function DmskCareerVideoPlayer({ onBonusVisible }: DmskCareerVideoPlayerP
     }
   }
 
+  function toggleMute() {
+    const video = videoRef.current;
+    if (!video) return;
+    video.muted = !video.muted;
+    setIsMuted(video.muted);
+  }
+
   return (
     <div style={{ position: "relative", width: "100%", height: "100%" }}>
       <video
         ref={videoRef}
         src="/assets/dmsk-career-bonus-video.mp4"
         poster="/assets/dmsk-career-poster.jpg"
-        preload="none"
+        preload="auto"
         playsInline
+        autoPlay
+        muted={isMuted}
         onClick={() => {
           if (videoRef.current?.paused) void playVideo();
           else videoRef.current?.pause();
@@ -156,6 +167,30 @@ export function DmskCareerVideoPlayer({ onBonusVisible }: DmskCareerVideoPlayerP
             />
           </button>
         </>
+      ) : null}
+      {isPlaying ? (
+        <button
+          type="button"
+          aria-label={isMuted ? "Unmute video" : "Mute video"}
+          onClick={toggleMute}
+          style={{
+            position: "absolute",
+            bottom: 12,
+            right: 12,
+            zIndex: 2,
+            display: "grid",
+            width: 40,
+            height: 40,
+            placeItems: "center",
+            border: "none",
+            borderRadius: 999,
+            background: "rgba(15, 23, 42, 0.6)",
+            color: "#ffffff",
+            cursor: "pointer",
+          }}
+        >
+          {isMuted ? <VolumeX size={18} /> : <Volume2 size={18} />}
+        </button>
       ) : null}
     </div>
   );

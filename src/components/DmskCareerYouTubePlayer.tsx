@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { Volume2, VolumeX } from "lucide-react";
 
 declare global {
   interface Window {
@@ -27,6 +28,8 @@ type YTPlayer = {
   playVideo: () => void;
   getCurrentTime: () => number;
   getDuration: () => number;
+  mute: () => void;
+  unMute: () => void;
 };
 
 type DmskCareerYouTubePlayerProps = {
@@ -61,6 +64,7 @@ export function DmskCareerYouTubePlayer({ videoId, onBonusVisible }: DmskCareerY
   const hasTrackedPlayRef = useRef(false);
   const hasTrackedCompleteRef = useRef(false);
   const [isPlaying, setIsPlaying] = useState(false);
+  const [isMuted, setIsMuted] = useState(true);
 
   function getContact() {
     try {
@@ -139,6 +143,8 @@ export function DmskCareerYouTubePlayer({ videoId, onBonusVisible }: DmskCareerY
           fs: 0,
           playsinline: 1,
           disablekb: 1,
+          autoplay: 1,
+          mute: 1,
         },
         events: {
           onStateChange: (event) => {
@@ -168,6 +174,16 @@ export function DmskCareerYouTubePlayer({ videoId, onBonusVisible }: DmskCareerY
 
   function playVideo() {
     playerRef.current?.playVideo();
+  }
+
+  function toggleMute() {
+    if (isMuted) {
+      playerRef.current?.unMute();
+      setIsMuted(false);
+    } else {
+      playerRef.current?.mute();
+      setIsMuted(true);
+    }
   }
 
   return (
@@ -238,6 +254,30 @@ export function DmskCareerYouTubePlayer({ videoId, onBonusVisible }: DmskCareerY
             />
           </button>
         </>
+      ) : null}
+      {isPlaying ? (
+        <button
+          type="button"
+          aria-label={isMuted ? "Unmute video" : "Mute video"}
+          onClick={toggleMute}
+          style={{
+            position: "absolute",
+            bottom: 12,
+            right: 12,
+            zIndex: 2,
+            display: "grid",
+            width: 40,
+            height: 40,
+            placeItems: "center",
+            border: "none",
+            borderRadius: 999,
+            background: "rgba(15, 23, 42, 0.6)",
+            color: "#ffffff",
+            cursor: "pointer",
+          }}
+        >
+          {isMuted ? <VolumeX size={18} /> : <Volume2 size={18} />}
+        </button>
       ) : null}
     </div>
   );

@@ -46,7 +46,6 @@ function aiMarketingText(text: string) {
 
 export default function ResultsPage() {
   const [session, setSession] = useState<FunnelSession | null>(null);
-  const [isVideoBonusVisible, setIsVideoBonusVisible] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
@@ -216,7 +215,7 @@ export default function ResultsPage() {
           </div>
 
           <div className="fit-video-preview" aria-label="AI digital marketing career video preview">
-            <DmskCareerYouTubePlayer videoId="0aQpflVj8OY" onBonusVisible={() => setIsVideoBonusVisible(true)} />
+            <DmskCareerYouTubePlayer videoId="0aQpflVj8OY" />
           </div>
 
           <div className="fit-video-offer-content">
@@ -225,7 +224,7 @@ export default function ResultsPage() {
               <span className="fit-kit-ai-label"><Sparkles size={22} /> AI Powered</span>
               <span><strong>Start earning 35,000+ per month</strong> as AI skilled Digital Marketer in less than 30 days</span>
             </h2>
-            <p><strong>Watch this 2 mins video</strong> to see how and unlock bonus at the end of the video</p>
+            <p><strong>Watch this 2 mins video</strong> to see how</p>
             <div className="fit-video-bonus-label">Free Bonus includes</div>
 
             <div className="fit-video-benefits">
@@ -235,11 +234,9 @@ export default function ResultsPage() {
               <span><Target size={26} /> Interview Preperation Kit</span>
             </div>
           </div>
-          {isVideoBonusVisible ? (
-            <Link className="fit-result-button fit-result-button--wide fit-result-button--green fit-video-cta" href={BONUS_SESSION_URL} onClick={() => ctaClicked("results_offer_video")}>
-              Claim Your Bonus Now! <ArrowRight size={16} />
-            </Link>
-          ) : null}
+          <Link className="fit-result-button fit-result-button--wide fit-result-button--green fit-video-cta" href={BONUS_SESSION_URL} onClick={() => ctaClicked("results_offer_video")}>
+            Claim Your Bonus Now! <ArrowRight size={16} />
+          </Link>
         </section>
 
         <SectionTitle
