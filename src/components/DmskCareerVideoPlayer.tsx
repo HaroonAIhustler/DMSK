@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { Volume2, VolumeX } from "lucide-react";
 
 declare global {
@@ -15,7 +15,6 @@ type DmskCareerVideoPlayerProps = {
 
 export function DmskCareerVideoPlayer({ onBonusVisible }: DmskCareerVideoPlayerProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
-  const playDelayTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const hasTrackedPlayRef = useRef(false);
   const hasTrackedCompleteRef = useRef(false);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -63,34 +62,12 @@ export function DmskCareerVideoPlayer({ onBonusVisible }: DmskCareerVideoPlayerP
     }).catch(() => {});
   }
 
-  // Only fire "video played" after 15s of sustained playback, so autoplay
-  // bounces (people who never really watch) don't create GHL contacts.
-  function scheduleTrackVideoPlay() {
-    if (hasTrackedPlayRef.current || playDelayTimerRef.current) return;
-    playDelayTimerRef.current = setTimeout(() => {
-      playDelayTimerRef.current = null;
-      trackVideoPlay();
-    }, 15000);
-  }
-
-  function cancelScheduledTrackVideoPlay() {
-    if (playDelayTimerRef.current) {
-      clearTimeout(playDelayTimerRef.current);
-      playDelayTimerRef.current = null;
-    }
-  }
-
-  useEffect(() => {
-    return () => cancelScheduledTrackVideoPlay();
-  }, []);
-
   async function playVideo() {
     const video = videoRef.current;
     if (!video) return;
     try {
       await video.play();
       setIsPlaying(true);
-      scheduleTrackVideoPlay();
     } catch {
       setIsPlaying(false);
     }
@@ -108,8 +85,14 @@ export function DmskCareerVideoPlayer({ onBonusVisible }: DmskCareerVideoPlayerP
   function toggleMute() {
     const video = videoRef.current;
     if (!video) return;
-    video.muted = !video.muted;
-    setIsMuted(video.muted);
+    const nextMuted = !video.muted;
+    video.muted = nextMuted;
+    setIsMuted(nextMuted);
+    if (!nextMuted) {
+      // Unmuting is a deliberate action, unlike autoplay starting muted --
+      // treat it as the real "video played" signal.
+      trackVideoPlay();
+    }
   }
 
   return (
@@ -127,19 +110,11 @@ export function DmskCareerVideoPlayer({ onBonusVisible }: DmskCareerVideoPlayerP
           else videoRef.current?.pause();
         }}
         onEnded={() => {
-          cancelScheduledTrackVideoPlay();
-          trackVideoPlay();
           onBonusVisible?.();
           trackVideoComplete();
         }}
-        onPlay={() => {
-          setIsPlaying(true);
-          scheduleTrackVideoPlay();
-        }}
-        onPause={() => {
-          setIsPlaying(false);
-          cancelScheduledTrackVideoPlay();
-        }}
+        onPlay={() => setIsPlaying(true)}
+        onPause={() => setIsPlaying(false)}
         onTimeUpdate={handleTimeUpdate}
         style={{
           display: "block",
