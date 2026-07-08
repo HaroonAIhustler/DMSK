@@ -61,6 +61,7 @@ export function DmskCareerYouTubePlayer({ videoId, onBonusVisible }: DmskCareerY
   const containerRef = useRef<HTMLDivElement>(null);
   const playerRef = useRef<YTPlayer | null>(null);
   const pollRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const playDelayTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const hasTrackedPlayRef = useRef(false);
   const hasTrackedCompleteRef = useRef(false);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -107,6 +108,23 @@ export function DmskCareerYouTubePlayer({ videoId, onBonusVisible }: DmskCareerY
     }).catch(() => {});
   }
 
+  // Only fire "video played" after 15s of sustained playback, so autoplay
+  // bounces (people who never really watch) don't create GHL contacts.
+  function scheduleTrackVideoPlay() {
+    if (hasTrackedPlayRef.current || playDelayTimerRef.current) return;
+    playDelayTimerRef.current = setTimeout(() => {
+      playDelayTimerRef.current = null;
+      trackVideoPlay();
+    }, 15000);
+  }
+
+  function cancelScheduledTrackVideoPlay() {
+    if (playDelayTimerRef.current) {
+      clearTimeout(playDelayTimerRef.current);
+      playDelayTimerRef.current = null;
+    }
+  }
+
   function startPolling() {
     if (pollRef.current) return;
     pollRef.current = setInterval(() => {
@@ -151,13 +169,16 @@ export function DmskCareerYouTubePlayer({ videoId, onBonusVisible }: DmskCareerY
             if (!window.YT) return;
             if (event.data === window.YT.PlayerState.PLAYING) {
               setIsPlaying(true);
-              trackVideoPlay();
+              scheduleTrackVideoPlay();
               startPolling();
             } else if (event.data === window.YT.PlayerState.ENDED) {
+              cancelScheduledTrackVideoPlay();
+              trackVideoPlay();
               onBonusVisible?.();
               trackVideoComplete();
               stopPolling();
             } else {
+              cancelScheduledTrackVideoPlay();
               stopPolling();
             }
           },
@@ -168,6 +189,7 @@ export function DmskCareerYouTubePlayer({ videoId, onBonusVisible }: DmskCareerY
     return () => {
       cancelled = true;
       stopPolling();
+      cancelScheduledTrackVideoPlay();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [videoId]);

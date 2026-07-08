@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Volume2, VolumeX } from "lucide-react";
 
 declare global {
@@ -15,6 +15,7 @@ type DmskCareerVideoPlayerProps = {
 
 export function DmskCareerVideoPlayer({ onBonusVisible }: DmskCareerVideoPlayerProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
+  const playDelayTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const hasTrackedPlayRef = useRef(false);
   const hasTrackedCompleteRef = useRef(false);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -62,13 +63,34 @@ export function DmskCareerVideoPlayer({ onBonusVisible }: DmskCareerVideoPlayerP
     }).catch(() => {});
   }
 
+  // Only fire "video played" after 15s of sustained playback, so autoplay
+  // bounces (people who never really watch) don't create GHL contacts.
+  function scheduleTrackVideoPlay() {
+    if (hasTrackedPlayRef.current || playDelayTimerRef.current) return;
+    playDelayTimerRef.current = setTimeout(() => {
+      playDelayTimerRef.current = null;
+      trackVideoPlay();
+    }, 15000);
+  }
+
+  function cancelScheduledTrackVideoPlay() {
+    if (playDelayTimerRef.current) {
+      clearTimeout(playDelayTimerRef.current);
+      playDelayTimerRef.current = null;
+    }
+  }
+
+  useEffect(() => {
+    return () => cancelScheduledTrackVideoPlay();
+  }, []);
+
   async function playVideo() {
     const video = videoRef.current;
     if (!video) return;
     try {
       await video.play();
       setIsPlaying(true);
-      trackVideoPlay();
+      scheduleTrackVideoPlay();
     } catch {
       setIsPlaying(false);
     }
@@ -104,12 +126,20 @@ export function DmskCareerVideoPlayer({ onBonusVisible }: DmskCareerVideoPlayerP
           if (videoRef.current?.paused) void playVideo();
           else videoRef.current?.pause();
         }}
-        onEnded={() => { onBonusVisible?.(); trackVideoComplete(); }}
+        onEnded={() => {
+          cancelScheduledTrackVideoPlay();
+          trackVideoPlay();
+          onBonusVisible?.();
+          trackVideoComplete();
+        }}
         onPlay={() => {
           setIsPlaying(true);
-          trackVideoPlay();
+          scheduleTrackVideoPlay();
         }}
-        onPause={() => setIsPlaying(false)}
+        onPause={() => {
+          setIsPlaying(false);
+          cancelScheduledTrackVideoPlay();
+        }}
         onTimeUpdate={handleTimeUpdate}
         style={{
           display: "block",
