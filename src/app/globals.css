@@ -416,6 +416,7 @@ a {
 
 .survey-single-column {
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
   justify-items: center;
   gap: 32px;
   width: 100%;
@@ -1007,6 +1008,7 @@ a {
 
 .trust-strip {
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
   justify-items: center;
   gap: 16px;
   width: min(100%, 680px);
@@ -3998,7 +4000,6 @@ a {
   }
 
   .fit-result-nav {
-    margin: -16px -16px 0;
     padding: 12px 16px;
   }
 
